@@ -1,103 +1,198 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, request
 
 app = Flask(__name__)
 
-# HTML base com navegação
-base_html = """
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Educativo - Vila Princesa</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
-        header { background: #0066cc; color: white; padding: 15px; text-align: center; }
-        nav { background: #004a99; padding: 10px; display: flex; justify-content: center; gap: 20px; }
-        nav a { color: white; text-decoration: none; font-weight: bold; }
-        nav a:hover { text-decoration: underline; }
-        main { padding: 20px; }
-        iframe { width: 100%; height: 315px; margin-bottom: 20px; border-radius: 10px; }
-        .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Aplicativo Educativo - Vila Princesa</h1>
-    </header>
-    <nav>
-        <a href="/">Início</a>
-        <a href="/videos">Vídeos</a>
-        <a href="/jogos">Jogos</a>
-        <a href="/contatos">Ajuda</a>
-    </nav>
-    <main>
-        {{ content|safe }}
-    </main>
-</body>
-</html>
-"""
+# ================== PÁGINA INICIAL ==================
+@app.route('/')
+def index():
+    return render_template_string("""
+    <h1>🌐 Portal Educativo da Saúde</h1>
+    <p>Bem-vindo ao site de apoio aos agentes do posto de saúde.</p>
+    <ul>
+        <li><a href="/videos">📺 Vídeos Educativos</a></li>
+        <li><a href="/quiz">❓ Quiz Educativo</a></li>
+        <li><a href="/memoria">🧠 Jogo da Memória</a></li>
+        <li><a href="/certo_errado">✅❌ Certo ou Errado</a></li>
+        <li><a href="/feedback">📝 Deixar Feedback</a></li>
+        <li><a href="/contato">☎️ Contato</a></li>
+    </ul>
+    """)
 
-@app.route("/")
-def home():
-    content = """
-    <div class="card">
-        <h2>Bem-vindo!</h2>
-        <p>Este aplicativo foi desenvolvido para apoiar crianças, adolescentes e famílias da comunidade Vila Princesa em Porto Velho.</p>
-        <p>Aqui você encontrará vídeos educativos, jogos interativos e informações de contato para ajuda.</p>
-    </div>
-    """
-    return render_template_string(base_html, content=content)
-
-@app.route("/videos")
+# ================== VÍDEOS ==================
+@app.route('/videos')
 def videos():
-    content = """
-    <div class="card">
-        <h2>🎥 Vídeos para Adultos</h2>
-        <iframe src="https://www.youtube.com/embed/OYYk-DhaoD0" allowfullscreen></iframe>
-        <iframe src="https://www.youtube.com/embed/phqr_q1WvZI" allowfullscreen></iframe>
-    </div>
-    <div class="card">
-        <h2>👶 Vídeos para Crianças</h2>
-        <iframe src="https://www.youtube.com/embed/yhvHsg8Epso" allowfullscreen></iframe>
-        <iframe src="https://www.youtube.com/embed/SoIpR-kbRcA" allowfullscreen></iframe>
-    </div>
-    """
-    return render_template_string(base_html, content=content)
+    return render_template_string("""
+    <h2>📺 Vídeos Educativos</h2>
+    <ul>
+        <li><a href="https://www.youtube.com/watch?v=VYOjWnS4cMY" target="_blank">Vacinação Infantil</a></li>
+        <li><a href="https://www.youtube.com/watch?v=abcd" target="_blank">Higiene Pessoal</a></li>
+        <li><a href="https://www.youtube.com/watch?v=efgh" target="_blank">Alimentação Saudável</a></li>
+    </ul>
+    <a href="/">⬅️ Voltar</a>
+    """)
 
-@app.route("/jogos")
-def jogos():
-    content = """
-    <div class="card">
-        <h2>🧩 Quiz de Segurança</h2>
-        <p><b>Pergunta:</b> O que você deve fazer se um estranho oferecer doces na rua?</p>
-        <ul>
-            <li>✅ Dizer não e procurar um adulto de confiança</li>
-            <li>❌ Aceitar os doces</li>
-            <li>❌ Sair com a pessoa</li>
-        </ul>
-    </div>
-    <div class="card">
-        <h2>🎮 Jogo da Memória (versão simples)</h2>
-        <p>Em breve: arraste e solte cartões para combinar segurança e respeito!</p>
-    </div>
-    """
-    return render_template_string(base_html, content=content)
+# ================== QUIZ ==================
+@app.route('/quiz')
+def quiz():
+    return render_template_string("""
+    <h2>❓ Quiz Educativo</h2>
 
-@app.route("/contatos")
-def contatos():
-    content = """
-    <div class="card">
-        <h2>📞 Conselhos Tutelares em Porto Velho</h2>
-        <ul>
-            <li><b>III Conselho Tutelar</b> – R. Erva Doce – (69) 98473-4966</li>
-            <li><b>1º Conselho Tutelar</b> – R. Joaquim Nabuco, 1733 – (69) 99981-0664</li>
-            <li><b>II Conselho Tutelar Zona Leste</b> – R. Antônio de Souza, 4730</li>
-            <li><b>Casa dos Conselhos Municipais</b> – R. Guanabara, 965 – (69) 98473-4098</li>
-        </ul>
-    </div>
-    """
-    return render_template_string(base_html, content=content)
+    <audio id="acerto" src="/static/sounds/acerto.mp3"></audio>
+    <audio id="erro" src="/static/sounds/erro.mp3"></audio>
 
+    <form id="quizForm">
+        <p>1) A vacinação é importante para prevenir doenças?</p>
+        <input type="radio" id="q1a" name="q1"> Sim <br>
+        <input type="radio" name="q1"> Não <br>
+
+        <p>2) Escovar os dentes deve ser feito apenas uma vez ao dia?</p>
+        <input type="radio" name="q2"> Sim <br>
+        <input type="radio" id="q2a" name="q2"> Não <br>
+
+        <p>3) Beber água ajuda a manter a saúde?</p>
+        <input type="radio" id="q3a" name="q3"> Sim <br>
+        <input type="radio" name="q3"> Não <br>
+
+        <button type="button" onclick="resultado()">Enviar Respostas</button>
+    </form>
+
+    <script>
+    function resultado() {
+        let pontos = 0;
+        if (document.getElementById("q1a").checked) pontos++;
+        if (document.getElementById("q2a").checked) pontos++;
+        if (document.getElementById("q3a").checked) pontos++;
+
+        if (pontos == 3) {
+            document.getElementById("acerto").play();
+            alert("🎉 Parabéns! Você acertou todas!");
+        } else {
+            document.getElementById("erro").play();
+            alert("Você acertou " + pontos + " de 3 perguntas. Continue tentando!");
+        }
+    }
+    </script>
+
+    <a href="/">⬅️ Voltar</a>
+    """)
+
+# ================== JOGO DA MEMÓRIA ==================
+@app.route('/memoria')
+def memoria():
+    return render_template_string("""
+    <h2>🧠 Jogo da Memória - Saúde</h2>
+
+    <audio id="acerto" src="/static/sounds/acerto.mp3"></audio>
+    <audio id="erro" src="/static/sounds/erro.mp3"></audio>
+
+    <div id="tabuleiro"></div>
+
+    <script>
+    const cartas = ["💉","💉","🍎","🍎","🧼","🧼","🚰","🚰"];
+    let selecionadas = [];
+
+    cartas.sort(() => 0.5 - Math.random());
+
+    const tabuleiro = document.getElementById("tabuleiro");
+    cartas.forEach((c, i) => {
+        let div = document.createElement("div");
+        div.dataset.valor = c;
+        div.innerHTML = "❓";
+        div.style.display = "inline-block";
+        div.style.width = "80px";
+        div.style.height = "80px";
+        div.style.margin = "10px";
+        div.style.fontSize = "40px";
+        div.style.textAlign = "center";
+        div.style.verticalAlign = "middle";
+        div.style.lineHeight = "80px";
+        div.style.border = "2px solid #444";
+        div.style.cursor = "pointer";
+        div.onclick = () => revelar(div);
+        tabuleiro.appendChild(div);
+    });
+
+    function revelar(div) {
+        if (div.classList.contains("revelado") || selecionadas.length == 2) return;
+        div.innerHTML = div.dataset.valor;
+        selecionadas.push(div);
+
+        if (selecionadas.length == 2) {
+            if (selecionadas[0].dataset.valor === selecionadas[1].dataset.valor) {
+                document.getElementById("acerto").play();
+                selecionadas.forEach(d => d.classList.add("revelado"));
+                selecionadas = [];
+            } else {
+                document.getElementById("erro").play();
+                setTimeout(() => {
+                    selecionadas.forEach(d => d.innerHTML = "❓");
+                    selecionadas = [];
+                }, 800);
+            }
+        }
+    }
+    </script>
+
+    <a href="/">⬅️ Voltar</a>
+    """)
+
+# ================== CERTO OU ERRADO ==================
+@app.route('/certo_errado')
+def certo_errado():
+    return render_template_string("""
+    <h2>✅❌ Jogo: Certo ou Errado</h2>
+
+    <audio id="acerto" src="/static/sounds/acerto.mp3"></audio>
+    <audio id="erro" src="/static/sounds/erro.mp3"></audio>
+
+    <p>🚰 Beber água ajuda na hidratação do corpo.</p>
+    <button onclick="verificar(true, true)">Certo</button>
+    <button onclick="verificar(false, true)">Errado</button>
+
+    <p>🍭 Comer doces em excesso faz bem para os dentes.</p>
+    <button onclick="verificar(true, false)">Certo</button>
+    <button onclick="verificar(false, false)">Errado</button>
+
+    <script>
+    function verificar(resposta, correto) {
+        if (resposta == correto) {
+            document.getElementById("acerto").play();
+            alert("✅ Muito bem, resposta correta!");
+        } else {
+            document.getElementById("erro").play();
+            alert("❌ Ops, tente novamente!");
+        }
+    }
+    </script>
+
+    <a href="/">⬅️ Voltar</a>
+    """)
+
+# ================== FEEDBACK ==================
+@app.route('/feedback', methods=["GET", "POST"])
+def feedback():
+    if request.method == "POST":
+        sugestao = request.form["sugestao"]
+        return f"<h2>Obrigado pelo feedback! Você escreveu:</h2><p>{sugestao}</p><a href='/'>⬅️ Voltar</a>"
+    return render_template_string("""
+    <h2>📝 Deixe seu Feedback</h2>
+    <form method="post">
+        <textarea name="sugestao" rows="5" cols="40" placeholder="Escreva aqui..."></textarea><br>
+        <button type="submit">Enviar</button>
+    </form>
+    <a href="/">⬅️ Voltar</a>
+    """)
+
+# ================== CONTATO ==================
+@app.route('/contato')
+def contato():
+    return render_template_string("""
+    <h2>☎️ Contato</h2>
+    <p>Email: suporte@posto.com</p>
+    <p>Telefone: (69) 99999-9999</p>
+    <a href="/">⬅️ Voltar</a>
+    """)
+
+# ================== EXECUTAR ==================
 if __name__ == "__main__":
     app.run(debug=True)
